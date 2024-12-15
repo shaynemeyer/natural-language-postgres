@@ -55,7 +55,7 @@ To get the project up and running, follow these steps:
 1. Install dependencies:
 
    ```bash
-   pnpm install
+   npm install
    ```
 
 2. Copy the example environment file:
@@ -67,15 +67,7 @@ To get the project up and running, follow these steps:
 3. Add your OpenAI API key and PostgreSQL connection string to the `.env` file:
 
    ```
-   OPENAI_API_KEY=your_api_key_here
-   POSTGRES_URL="..."
-   POSTGRES_PRISMA_URL="..."
-   POSTGRES_URL_NO_SSL="..."
-   POSTGRES_URL_NON_POOLING="..."
-   POSTGRES_USER="..."
-   POSTGRES_HOST="..."
-   POSTGRES_PASSWORD="..."
-   POSTGRES_DATABASE="..."
+   DATABASE_URL="..."
    ```
 4. Download the dataset:
   - Go to https://www.cbinsights.com/research-unicorn-companies

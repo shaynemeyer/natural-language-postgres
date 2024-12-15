@@ -1,30 +1,52 @@
 "use server";
 
 import { Config, configSchema, explanationsSchema, Result } from "@/lib/types";
-import { openai } from "@ai-sdk/openai";
-import { sql } from "@vercel/postgres";
+import { createAmazonBedrock } from "@ai-sdk/amazon-bedrock";
+import { fromSSO } from "@aws-sdk/credential-providers";
+import { AWS_REGION_BEDROCK } from "@/lib/constants";
+
+import { sql } from "drizzle-orm";
 import { generateObject } from "ai";
 import { z } from "zod";
+import { db, pgClient } from "@/db/drizzle";
+
+const bedrock = createAmazonBedrock({
+  region: AWS_REGION_BEDROCK,
+
+  bedrockOptions: {
+    credentials: fromSSO({
+      profile: process.env.AWS_PROFILE ?? "",
+    }),
+  },
+});
+
+const modelId = bedrock("meta.llama3-2-3b-instruct-v1:0", {
+  additionalModelRequestFields: {
+    max_new_tokens: 200,
+    top_p: 0.9,
+  },
+});
 
 export const generateQuery = async (input: string) => {
   "use server";
+
   try {
     const result = await generateObject({
-      model: openai("gpt-4o"),
+      model: modelId,
       system: `You are a SQL (postgres) and data visualization expert. Your job is to help the user write a SQL query to retrieve the data they need. The table schema is as follows:
 
       unicorns (
       id SERIAL PRIMARY KEY,
-      company VARCHAR(255) NOT NULL UNIQUE,
-      valuation DECIMAL(10, 2) NOT NULL,
+      company TEXT NOT NULL UNIQUE,
+      valuation NUMERIC(10, 2) NOT NULL,
       date_joined DATE,
-      country VARCHAR(255) NOT NULL,
-      city VARCHAR(255) NOT NULL,
-      industry VARCHAR(255) NOT NULL,
+      country TEXT NOT NULL,
+      city TEXT NOT NULL,
+      industry TEXT NOT NULL,
       select_investors TEXT NOT NULL
     );
 
-    Only retrieval queries are allowed.
+    Only retrieval queries are allowed. Only generate the resulting query as a SELECT query.
 
     For things like industry, company names and other string fields, use the ILIKE operator and convert both the search term and the field to lowercase using LOWER() function. For example: LOWER(industry) ILIKE LOWER('%search_term%').
 
@@ -49,6 +71,8 @@ export const generateQuery = async (input: string) => {
     If the user asks for 'over time' data, return by year.
 
     When searching for UK or USA, write out United Kingdom or United States respectively.
+
+    Only generate the resulting query as a SELECT query only.
 
     EVERY QUERY SHOULD RETURN QUANTITATIVE DATA THAT CAN BE PLOTTED ON A CHART! There should always be at least two columns. If the user asks for a single column, return the column and the count of the column. If the user asks for a rate, return the rate as a decimal. For example, 0.1 would be 10%.
     `,
@@ -84,11 +108,11 @@ export const runGenerateSQLQuery = async (query: string) => {
 
   let data: any;
   try {
-    data = await sql.query(query);
+    data = await pgClient.query(`${query}`);
   } catch (e: any) {
     if (e.message.includes('relation "unicorns" does not exist')) {
       console.log(
-        "Table does not exist, creating and seeding it with dummy data now...",
+        "Table does not exist, creating and seeding it with dummy data now..."
       );
       // throw error
       throw Error("Table does not exist");
@@ -104,7 +128,7 @@ export const explainQuery = async (input: string, sqlQuery: string) => {
   "use server";
   try {
     const result = await generateObject({
-      model: openai("gpt-4o"),
+      model: modelId,
       schema: z.object({
         explanations: explanationsSchema,
       }),
@@ -141,14 +165,14 @@ export const explainQuery = async (input: string, sqlQuery: string) => {
 
 export const generateChartConfig = async (
   results: Result[],
-  userQuery: string,
+  userQuery: string
 ) => {
   "use server";
   const system = `You are a data visualization expert. `;
 
   try {
     const { object: config } = await generateObject({
-      model: openai("gpt-4o"),
+      model: modelId,
       system,
       prompt: `Given the following data from a SQL query result, generate the chart config that best visualises the data and answers the users query.
       For multiple groups use multi-lines.
@@ -182,7 +206,7 @@ export const generateChartConfig = async (
     const updatedConfig: Config = { ...config, colors };
     return { config: updatedConfig };
   } catch (e) {
-    // @ts-expect-errore
+    // @ts-expect-error
     console.error(e.message);
     throw new Error("Failed to generate chart suggestion");
   }

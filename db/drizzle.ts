@@ -11,4 +11,5 @@ async function connect() {
 
 connect();
 
+export const pgClient = client;
 export const db = drizzle(client);
