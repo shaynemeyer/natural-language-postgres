@@ -1,9 +1,6 @@
 # Natural Language PostgreSQL
-
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fnatural-language-postgres&env=OPENAI_API_KEY&envDescription=Learn%20more%20about%20how%20to%20get%20the%20API%20Keys%20for%20the%20application&envLink=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fnatural-language-postgres%2Fblob%2Fmain%2F.env.example&demo-title=Natural%20Language%20Postgres&demo-description=Query%20PostgreSQL%20database%20using%20natural%20language%20and%20visualize%20results%20with%20Next.js%20and%20AI%20SDK.&demo-url=https%3A%2F%2Fnatural-language-postgres.vercel.app&stores=%5B%7B%22type%22%3A%22postgres%22%7D%5D)
-
-This project is a Next.js application that allows users to query a PostgreSQL database using natural language and visualize the results. It's powered by the AI SDK by Vercel and uses OpenAI's GPT-4o model to translate natural language queries into SQL.
+This project is a Next.js application that allows users to query a PostgreSQL database using natural language and visualize the results. It's powered by the AI SDK by Vercel
+<!--  and uses OpenAI's GPT-4o model to translate natural language queries into SQL. -->
 
 ## Features
 
@@ -15,9 +12,9 @@ This project is a Next.js application that allows users to query a PostgreSQL da
 
 - Next.js for the frontend and API routes
 - AI SDK by Vercel for AI integration
-- OpenAI's GPT-4o for natural language processing
+<!-- - OpenAI's GPT-4o for natural language processing -->
 - PostgreSQL for data storage
-- Vercel Postgres for database hosting
+<!-- - Vercel Postgres for database hosting -->
 - Framer Motion for animations
 - ShadowUI for UI components
 - Tailwind CSS for styling
@@ -64,7 +61,7 @@ To get the project up and running, follow these steps:
    cp .env.example .env
    ```
 
-3. Add your OpenAI API key and PostgreSQL connection string to the `.env` file:
+3. Add your PostgreSQL connection string to the `.env` file:
 
    ```
    DATABASE_URL="..."
@@ -88,9 +85,7 @@ Your project should now be running on [http://localhost:3000](http://localhost:3
 
 ## Deployment
 
-The project is set up for easy deployment on Vercel. Use the "Deploy with Vercel" button in the repository to create your own instance of the application.
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fnatural-language-postgres&env=OPENAI_API_KEY&envDescription=Learn%20more%20about%20how%20to%20get%20the%20API%20Keys%20for%20the%20application&envLink=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fnatural-language-postgres%2Fblob%2Fmain%2F.env.example&demo-title=Natural%20Language%20Postgres&demo-description=Query%20PostgreSQL%20database%20using%20natural%20language%20and%20visualize%20results%20with%20Next.js%20and%20AI%20SDK.&demo-url=https%3A%2F%2Fnatural-language-postgres.vercel.app&stores=%5B%7B%22type%22%3A%22postgres%22%7D%5D)
+TBD
 
 
 ## Learn More
@@ -99,8 +94,6 @@ To learn more about the technologies used in this project, check out the followi
 
 - [Next.js Documentation](https://nextjs.org/docs)
 - [AI SDK](https://sdk.vercel.ai/docs)
-- [OpenAI](https://openai.com/)
-- [Vercel Postgres powered by Neon](https://vercel.com/docs/storage/vercel-postgres)
 - [Framer Motion](https://www.framer.com/motion/)
 - [ShadcnUI](https://ui.shadcn.com/)
 - [Tailwind CSS](https://tailwindcss.com/docs)
@@ -108,6 +101,6 @@ To learn more about the technologies used in this project, check out the followi
 
 ## Todos
 
-- Use Drizzle ORM instead of `@vercel/postgres`
-- Use AWS Bedrock with Claude 3.5 instead of OpenAI.
-- Use a local PostgreSQL database instead of Vercel Postgres
+- [x] Use Drizzle ORM instead of `@vercel/postgres`
+- [ ] Find a suitable model to work well with Text-To-SQL
+- [x] Use a local PostgreSQL database instead of Vercel Postgres
